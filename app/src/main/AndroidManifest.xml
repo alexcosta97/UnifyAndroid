@@ -9,6 +9,32 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".AddUser"
+            android:label="@string/title_activity_add_user"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".DetailUser"
+            android:label="@string/title_activity_detail_user"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ListUsers"
+            android:label="@string/title_activity_list_users"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Reports"
+            android:label="@string/title_activity_reports"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".NewOrder"
+            android:label="@string/title_activity_new_order"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".MainMenu"
+            android:label="@string/title_activity_main_menu"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".AddCompanyActivity" />
+        <activity android:name=".SignInActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
