@@ -12,4 +12,6 @@
     <string name="title_activity_list_users">Users</string>
     <string name="title_activity_detail_user">User</string>
     <string name="title_activity_add_user">Create User</string>
+    <string name="sign_in_text">SIGN-IN</string>
+    <string name="sign_up_text">SIGN-UP</string>
 </resources>
