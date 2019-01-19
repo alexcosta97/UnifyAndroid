@@ -14,4 +14,7 @@
     <string name="title_activity_add_user">Create User</string>
     <string name="sign_in_text">SIGN-IN</string>
     <string name="sign_up_text">SIGN-UP</string>
+    <string name="login_error_title">Login Error</string>
+    <string name="login_error_message">Invalid Email or Password</string>
+    <string name="ok">OK</string>
 </resources>
