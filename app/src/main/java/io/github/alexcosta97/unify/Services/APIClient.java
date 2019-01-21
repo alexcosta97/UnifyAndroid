@@ -2,15 +2,15 @@ package io.github.alexcosta97.unify.Services;
 
 import java.util.List;
 
-import io.github.alexcosta97.unify.Models.Category;
-import io.github.alexcosta97.unify.Models.Location;
-import io.github.alexcosta97.unify.Models.LoginDetails;
-import io.github.alexcosta97.unify.Models.Order;
-import io.github.alexcosta97.unify.Models.Product;
-import io.github.alexcosta97.unify.Models.Subcategory;
-import io.github.alexcosta97.unify.Models.Supplier;
-import io.github.alexcosta97.unify.Models.Template;
-import io.github.alexcosta97.unify.Models.User;
+import io.github.alexcosta97.unify.Models.Database.Category;
+import io.github.alexcosta97.unify.Models.Database.Location;
+import io.github.alexcosta97.unify.Models.RequestModels.LoginDetails;
+import io.github.alexcosta97.unify.Models.Database.Order;
+import io.github.alexcosta97.unify.Models.Database.Product;
+import io.github.alexcosta97.unify.Models.Database.Subcategory;
+import io.github.alexcosta97.unify.Models.Database.Supplier;
+import io.github.alexcosta97.unify.Models.Database.Template;
+import io.github.alexcosta97.unify.Models.Database.User;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
