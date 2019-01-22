@@ -3,16 +3,17 @@ package io.github.alexcosta97.unify.Models.Database;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 import java.util.Date;
 
-@Entity(foreignKeys = {
-        @ForeignKey(entity = Location.class, parentColumns = "location_id", childColumns = "location_id"),
-        @ForeignKey(entity = Supplier.class, parentColumns = "supplier_id", childColumns = "supplier_id")
-}, tableName = "orders")
+@Entity(indices = {@Index(value = "order_id", unique = true)}, tableName = "orders")
 public class Order {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    @NonNull
+    public int id;
     @ColumnInfo(name = "order_id")
     public String orderId;
     @ColumnInfo(name = "location_id")

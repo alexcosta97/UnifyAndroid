@@ -51,7 +51,7 @@ public class OrderResponse {
         this._id = _id;
     }
 
-    private class ProductsOrdered{
+    public class ProductsOrdered{
         private ProductResponse product;
         private int quantity;
 

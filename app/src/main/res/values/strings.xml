@@ -17,4 +17,18 @@
     <string name="login_error_title">Login Error</string>
     <string name="login_error_message">Invalid Email or Password</string>
     <string name="ok">OK</string>
+    <string name="new_order_title">New Order</string>
+    <string name="new_order_description">Place a new single-time order</string>
+    <string name="template_order_title">From a Template</string>
+    <string name="templateOrderDescription">Edit Quantities in a Template</string>
+    <string name="reportsTitle">Reports</string>
+    <string name="reportsDescription">See your recent orders</string>
+    <string name="activity_template_order_title">Select Template</string>
+    <string name="activity_list_locations_title">Locations</string>
+    <string name="activity_list_suppliers_title">Suppliers</string>
+    <string name="activity_list_categories_title">Categories</string>
+    <string name="activity_list_subcategories_title">Subcategories</string>
+    <string name="activity_list_products_title">Products</string>
+    <string name="activity_list_templates_title">Templates</string>
+    <string name="activity_sign_in_title">Sign In</string>
 </resources>

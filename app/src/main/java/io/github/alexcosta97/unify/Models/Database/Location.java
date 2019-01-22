@@ -4,13 +4,15 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
-@Entity(foreignKeys = @ForeignKey(entity= Company.class,
-        parentColumns = "company_id",
-        childColumns = "company_id"))
+@Entity(indices = {@Index(value = "location_id", unique = true)})
 public class Location {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    @NonNull
+    public int id;
     @ColumnInfo(name = "location_id")
     public String locationId;
     @ColumnInfo(name = "location_name")

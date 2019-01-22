@@ -6,6 +6,7 @@ public class LocationResponse {
     private String _id;
     private String name;
     private String phone;
+    private String fax;
     private CompanyResponse company;
     private String email;
     private Address address;
@@ -57,5 +58,13 @@ public class LocationResponse {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public String getFax() {
+        return fax;
+    }
+
+    public void setFax(String fax) {
+        this.fax = fax;
     }
 }

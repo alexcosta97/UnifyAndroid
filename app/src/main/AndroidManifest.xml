@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.github.alexcosta97.unify">
 
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -12,9 +12,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ListTemplates"
+            android:label="@string/activity_list_templates_title"></activity>
+        <activity android:name=".ListProducts"
+            android:label="@string/activity_list_products_title"/>
+        <activity android:name=".ListSubcategories"
+            android:label="@string/activity_list_subcategories_title"/>
+        <activity android:name=".ListCategories"
+            android:label="@string/activity_list_categories_title"/>
+        <activity android:name=".ListSuppliers"
+            android:label="@string/activity_list_suppliers_title"/>
+        <activity android:name=".ListLocations"
+            android:label="@string/activity_list_locations_title"/>
+        <activity android:name=".TemplateOrder"
+            android:label="@string/activity_template_order_title"/>
         <activity
             android:name=".AddUser"
-            android:label="@string/title_activity_add_user"></activity>
+            android:label="@string/title_activity_add_user" />
         <activity
             android:name=".DetailUser"
             android:label="@string/title_activity_detail_user" />
@@ -23,20 +37,22 @@
             android:label="@string/title_activity_list_users" />
         <activity
             android:name=".Reports"
-            android:label="@string/title_activity_reports"/>
+            android:label="@string/title_activity_reports" />
         <activity
             android:name=".NewOrder"
-            android:label="@string/title_activity_new_order" />
+            android:label="@string/title_activity_new_order"
+            android:parentActivityName=".MainMenu" />
         <activity
             android:name=".MainMenu"
-            android:label="@string/title_activity_main_menu"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".AddCompanyActivity"
-            android:parentActivityName=".MainActivity"/>
-        <activity android:name=".SignInActivity"
-            android:parentActivityName=".MainActivity"/>
-        <activity android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:label="@string/title_activity_main_menu" />
+        <activity
+            android:name=".AddCompanyActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".SignInActivity"
+            android:label="@string/activity_sign_in_title"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

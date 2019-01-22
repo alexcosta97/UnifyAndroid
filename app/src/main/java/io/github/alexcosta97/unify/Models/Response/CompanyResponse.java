@@ -3,22 +3,41 @@ package io.github.alexcosta97.unify.Models.Response;
 import io.github.alexcosta97.unify.Models.Database.Company;
 
 public class CompanyResponse {
-    private Company company;
-    private LocationResponse location;
+    private String _id;
+    private String name;
+    private String email;
+    private String phone;
 
-    public Company getCompany() {
-        return company;
+
+    public String getName() {
+        return name;
     }
 
-    public void setCompany(Company company) {
-        this.company = company;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public LocationResponse getLocation() {
-        return location;
+    public String getEmail() {
+        return email;
     }
 
-    public void setLocation(LocationResponse location) {
-        this.location = location;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
     }
 }

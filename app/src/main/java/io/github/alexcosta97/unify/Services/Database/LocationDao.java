@@ -3,6 +3,7 @@ package io.github.alexcosta97.unify.Services.Database;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
+import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
@@ -12,9 +13,9 @@ import io.github.alexcosta97.unify.Models.Database.Location;
 
 @Dao
 public interface LocationDao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertOne(Location location);
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertMany(List<Location> locations);
 
     @Update

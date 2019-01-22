@@ -2,15 +2,27 @@ package io.github.alexcosta97.unify.Services;
 
 import java.util.List;
 
-import io.github.alexcosta97.unify.Models.Database.Category;
-import io.github.alexcosta97.unify.Models.Database.Location;
+import io.github.alexcosta97.unify.Models.Database.Authorization;
+import io.github.alexcosta97.unify.Models.RequestModels.CategoryRequest;
+import io.github.alexcosta97.unify.Models.RequestModels.CompanyRequest;
+import io.github.alexcosta97.unify.Models.RequestModels.LocationRequest;
 import io.github.alexcosta97.unify.Models.RequestModels.LoginDetails;
-import io.github.alexcosta97.unify.Models.Database.Order;
-import io.github.alexcosta97.unify.Models.Database.Product;
-import io.github.alexcosta97.unify.Models.Database.Subcategory;
-import io.github.alexcosta97.unify.Models.Database.Supplier;
-import io.github.alexcosta97.unify.Models.Database.Template;
-import io.github.alexcosta97.unify.Models.Database.User;
+import io.github.alexcosta97.unify.Models.RequestModels.OrderRequest;
+import io.github.alexcosta97.unify.Models.RequestModels.ProductRequest;
+import io.github.alexcosta97.unify.Models.RequestModels.SubcategoryRequest;
+import io.github.alexcosta97.unify.Models.RequestModels.SupplierRequest;
+import io.github.alexcosta97.unify.Models.RequestModels.TemplateRequest;
+import io.github.alexcosta97.unify.Models.RequestModels.UserRequest;
+import io.github.alexcosta97.unify.Models.Response.CategoryResponse;
+import io.github.alexcosta97.unify.Models.Response.CompanyResponse;
+import io.github.alexcosta97.unify.Models.Response.LocationResponse;
+import io.github.alexcosta97.unify.Models.Response.OrderResponse;
+import io.github.alexcosta97.unify.Models.Response.PostCompanyResponse;
+import io.github.alexcosta97.unify.Models.Response.ProductResponse;
+import io.github.alexcosta97.unify.Models.Response.SubcategoryResponse;
+import io.github.alexcosta97.unify.Models.Response.SupplierResponse;
+import io.github.alexcosta97.unify.Models.Response.TemplateResponse;
+import io.github.alexcosta97.unify.Models.Response.UserResponse;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -22,122 +34,125 @@ import retrofit2.http.Path;
 
 public interface APIClient {
     @POST("auth/")
-    Call<ResponseBody> login(@Body LoginDetails loginDetails);
+    Call<Authorization> login(@Body LoginDetails loginDetails);
 
-//    @POST("/companies/")
-//    Call<ResponseBody> createCompany(@Body CompanyInfo companyInfo);
+    @GET("companies/{id}")
+    Call<CompanyResponse> getCompany(@Path("id") String company);
+
+    @POST("companies/")
+    Call<PostCompanyResponse> createCompany(@Body CompanyRequest companyInfo);
 
     @GET("users/")
-    Call<List<User>> getUsers();
+    Call<List<UserResponse>> getUsers();
 
     @GET("users/{id}")
-    Call<User> getUser(@Path("id") String userId);
+    Call<UserResponse> getUser(@Path("id") String userId);
 
     @POST("users/")
-    Call<ResponseBody> createUser(@Body User user);
+    Call<UserResponse> createUser(@Body UserRequest user);
 
     @PUT("users/{id}")
-    Call<ResponseBody> updateUser(@Body User user, @Path("id") String userId);
+    Call<ResponseBody> updateUser(@Body UserRequest user, @Path("id") String userId);
 
     @DELETE("users/{id}")
     Call<ResponseBody> deleteUser(@Path("id") String userId);
 
     @GET("locations/")
-    Call<List<Location>> getLocations();
+    Call<List<LocationResponse>> getLocations();
 
     @GET("locations/{id}")
-    Call<Location> getLocation(@Path("id") String locationId);
+    Call<LocationResponse> getLocation(@Path("id") String locationId);
 
     @POST("locations/")
-    Call<ResponseBody> createLocation(@Body Location location);
+    Call<LocationResponse> createLocation(@Body LocationRequest location);
 
     @PUT("locations/{id}")
-    Call<ResponseBody> updateLocation(@Body Location location, @Path("id") String locationId);
+    Call<ResponseBody> updateLocation(@Body LocationRequest location, @Path("id") String locationId);
 
     @DELETE("locations/{id}")
     Call<ResponseBody> deleteLocation(@Path("id") String locationId);
 
     @GET("suppliers/")
-    Call<List<Supplier>> getSuppliers();
+    Call<List<SupplierResponse>> getSuppliers();
 
     @GET("suppliers/{id}")
-    Call<Supplier> getSupplier(@Path("id") String supplierId);
+    Call<SupplierResponse> getSupplier(@Path("id") String supplierId);
 
     @POST("suppliers/")
-    Call<ResponseBody> createSupplier(@Body Supplier supplier);
+    Call<SupplierResponse> createSupplier(@Body SupplierRequest supplier);
 
     @PUT("suppliers/{id}")
-    Call<ResponseBody> updateSupplier(@Body Supplier supplier, @Path("id") String supplierId);
+    Call<ResponseBody> updateSupplier(@Body SupplierRequest supplier, @Path("id") String supplierId);
 
     @DELETE("suppliers/{id}")
     Call<ResponseBody> deleteSupplier(@Path("id") String supplierId);
 
     @GET("categories/")
-    Call<List<Category>> getCategories();
+    Call<List<CategoryResponse>> getCategories();
 
     @GET("categories/{id}")
-    Call<Category> getCategory(@Path("id") String categoryId);
+    Call<CategoryResponse> getCategory(@Path("id") String categoryId);
 
     @POST("categories/")
-    Call<ResponseBody> createCategory(@Body Category category);
+    Call<CategoryResponse> createCategory(@Body CategoryRequest category);
 
     @PUT("categories/{id}")
-    Call<ResponseBody> updateCategory(@Body Category category, @Path("id") String categoryId);
+    Call<ResponseBody> updateCategory(@Body CategoryRequest category, @Path("id") String categoryId);
 
     @DELETE("categories/{id}")
     Call<ResponseBody> deleteCategory(@Path("id") String categoryId);
 
     @GET("products/")
-    Call<List<Product>> getProducts();
+    Call<List<ProductResponse>> getProducts();
 
     @GET("products/{id}")
-    Call<Product> getProduct(@Path("id") String productId);
+    Call<ProductResponse> getProduct(@Path("id") String productId);
 
     @POST("products/")
-    Call<ResponseBody> createProduct(@Body Product product);
+    Call<ProductResponse> createProduct(@Body ProductRequest product);
 
     @PUT("products/{id}")
-    Call<ResponseBody> updateProducts(@Body Product product, @Path("id") String productId);
+    Call<ResponseBody> updateProducts(@Body ProductRequest product, @Path("id") String productId);
 
     @DELETE("products/{id}")
     Call<ResponseBody> deleteProduct(@Path("id") String productId);
 
     @GET("subcategories/")
-    Call<List<Subcategory>> getSubcategories();
+    Call<List<SubcategoryResponse>> getSubcategories();
 
     @GET("subcategories/{id}")
-    Call<Subcategory> getSubcategory(@Path("id") String subcategoryId);
+    Call<SubcategoryResponse> getSubcategory(@Path("id") String subcategoryId);
 
     @POST("subcategories/")
-    Call<ResponseBody> createSubcategory(@Body Subcategory subcategory);
+    Call<SubcategoryResponse> createSubcategory(@Body SubcategoryRequest subcategory);
 
     @PUT("subcategories/{id}")
-    Call<ResponseBody> updateSubcategory(@Body Subcategory subcategory, @Path("id") String subcategoryId);
+    Call<ResponseBody> updateSubcategory(@Body SubcategoryRequest subcategory, @Path("id") String subcategoryId);
 
     @DELETE("subcategories/{id}")
     Call<ResponseBody> deleteSubcategory(@Path("id") String subcategory);
 
     @GET("templates/")
-    Call<List<Template>> getTemplates();
+    Call<List<TemplateResponse>> getTemplates();
 
     @GET("templates/{id}")
-    Call<Template> getTemplate(@Path("id") String templateId);
+    Call<TemplateResponse> getTemplate(@Path("id") String templateId);
 
     @POST("templates/")
-    Call<ResponseBody> createTemplate(@Body Template template);
+    Call<List<TemplateResponse>> createTemplate(@Body TemplateRequest template);
 
     @PUT("templates/{id}")
-    Call<ResponseBody> updateTemplate(@Body Template template, @Path("id") String templateId);
+    Call<ResponseBody> updateTemplate(@Body TemplateRequest template, @Path("id") String templateId);
 
     @DELETE("templates/{id}")
     Call<ResponseBody> deleteTemplate(@Path("id") String templateId);
 
     @GET("orders/")
-    Call<List<Order>> getOrders();
+    Call<List<OrderResponse>> getOrders();
 
     @GET("orders/{id}")
-    Call<Order> getOrders(@Path("id") String orderId);
+    Call<OrderResponse> getOrders(@Path("id") String orderId);
 
     @POST("orders/")
-    Call<ResponseBody> createOrder(@Body Order order);
+    Call<OrderResponse> createOrder(@Body OrderRequest order);
 }

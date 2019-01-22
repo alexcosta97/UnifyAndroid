@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_orders"
+            android:title="Orders" />
+        <item
+            android:id="@+id/nav_users"
+            android:title="Users" />
+        <item
+            android:id="@+id/nav_locations"
+            android:title="Locations"/>
+        <item
+            android:id="@+id/nav_suppliers"
+            android:title="Suppliers"/>
+        <item
+            android:id="@+id/nav_categories"
+            android:title="Categories"/>
+        <item
+            android:id="@+id/nav_subcategories"
+            android:title="Subcategories"/>
+        <item
+            android:id="@+id/nav_products"
+            android:title="Products"/>
+        <item
+            android:id="@+id/nav_templates"
+            android:title="Templates"/>
+    </group>
+</menu>

@@ -3,11 +3,13 @@ package io.github.alexcosta97.unify.Services;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
 import io.github.alexcosta97.unify.Models.Database.Authorization;
 import io.github.alexcosta97.unify.Models.Database.Category;
 import io.github.alexcosta97.unify.Models.Database.Company;
+import io.github.alexcosta97.unify.Models.Database.Converters;
 import io.github.alexcosta97.unify.Models.Database.Location;
 import io.github.alexcosta97.unify.Models.Database.Order;
 import io.github.alexcosta97.unify.Models.Database.Product;
@@ -52,7 +54,8 @@ import io.github.alexcosta97.unify.Services.Database.UserLocationDao;
         TemplateSubcategories.class,
         User.class,
         UserLocation.class
-}, version = 1)
+}, version = 8)
+@TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
     public abstract AuthorizationDao authorizationDao();
     public abstract CategoryDao categoryDao();
@@ -70,16 +73,14 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract UserDao userDao();
     public abstract UserLocationDao userLocationDao();
     
-    private static AppDatabase dbInstance;
+    private static volatile AppDatabase dbInstance;
+
+    private static AppDatabase create(final Context context){
+        return Room.databaseBuilder(context, AppDatabase.class, "unifyDB.db").fallbackToDestructiveMigration().build();
+    }
     
     public static AppDatabase getDatabase(Context context){
-        if(dbInstance == null){
-            synchronized (AppDatabase.class){
-                if(dbInstance == null){
-                    dbInstance = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "unify_db").build();
-                }
-            }
-        }
+        if(dbInstance == null) dbInstance = create(context);
         return dbInstance;
     }
 }
