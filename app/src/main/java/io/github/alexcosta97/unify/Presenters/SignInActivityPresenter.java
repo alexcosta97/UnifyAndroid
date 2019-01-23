@@ -1,10 +1,12 @@
 package io.github.alexcosta97.unify.Presenters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 
 import com.google.gson.Gson;
 
+import io.github.alexcosta97.unify.MainActivity;
 import io.github.alexcosta97.unify.MainMenu;
 import io.github.alexcosta97.unify.Models.Database.Authorization;
 import io.github.alexcosta97.unify.Models.RequestModels.LoginDetails;
@@ -57,6 +59,18 @@ public class SignInActivityPresenter {
             @Override
             public void onFailure(Call<Authorization> call, Throwable t) {
                 view.displayErrorDialog("Error", "Something went wrong");
+            }
+        });
+    }
+
+    public static void logOut(final Context context){
+        final AppDatabase db = AppDatabase.getDatabase(context);
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                db.authorizationDao().deleteAuthorization(db.authorizationDao().getAuthorization());
+                Intent intent = new Intent(context, MainActivity.class);
+                context.startActivity(intent);
             }
         });
     }
