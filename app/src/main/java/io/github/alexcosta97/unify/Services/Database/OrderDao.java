@@ -31,6 +31,6 @@ public interface OrderDao {
     @Query("SELECT * FROM orders ORDER BY date DESC")
     List<Order> getAll();
 
-    @Query("SELECT * FROM orders WHERE order_id = :query_id LIMIT 1")
-    Order getById(String query_id);
+    @Query("SELECT * FROM orders WHERE id = :query_id LIMIT 1")
+    Order getById(int query_id);
 }

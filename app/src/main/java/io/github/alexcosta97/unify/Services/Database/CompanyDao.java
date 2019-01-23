@@ -31,6 +31,6 @@ public interface CompanyDao {
     @Query("SELECT * FROM company ORDER BY company_name ASC")
     List<Company> getAll();
 
-    @Query("SELECT * FROM company WHERE company_id = :query_id LIMIT 1")
-    Company getById(String query_id);
+    @Query("SELECT * FROM company WHERE id = :query_id LIMIT 1")
+    Company getById(int query_id);
 }

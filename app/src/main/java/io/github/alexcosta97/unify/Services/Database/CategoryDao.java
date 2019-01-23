@@ -31,6 +31,6 @@ public interface CategoryDao {
     @Query("SELECT * FROM category ORDER BY category_name ASC")
     List<Category> getAll();
 
-    @Query("SELECT * FROM category WHERE category_id = :query_id LIMIT 1")
-    Category getById(String query_id);
+    @Query("SELECT * FROM category WHERE id = :query_id LIMIT 1")
+    Category getById(int query_id);
 }

@@ -9,6 +9,8 @@ import android.view.View;
 
 public class DetailUser extends AppCompatActivity {
 
+    private int userId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

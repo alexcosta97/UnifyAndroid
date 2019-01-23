@@ -1,28 +1,35 @@
 package io.github.alexcosta97.unify;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.List;
 
 import io.github.alexcosta97.unify.Adapters.UsersAdapter;
+import io.github.alexcosta97.unify.Models.Database.User;
 import io.github.alexcosta97.unify.Presenters.ListUsersPresenter;
-import io.github.alexcosta97.unify.Views.ListUsersView;
+import io.github.alexcosta97.unify.Presenters.SignInActivityPresenter;
+import io.github.alexcosta97.unify.Views.ListItemsView;
 
-public class ListUsers extends AppCompatActivity implements ListUsersView {
+public class ListUsers extends AppCompatActivity implements ListItemsView {
 
     private DrawerLayout mDrawerLayout;
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     private ListUsersPresenter presenter;
+    UsersAdapter adapter;
+    ListView list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +39,14 @@ public class ListUsers extends AppCompatActivity implements ListUsersView {
 
         setAppBar();
         setNavigationDrawer();
-        setRecyclerView();
+        setListView(presenter.getUsers());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.clear();
+        adapter.addAll(presenter.getUsers());
     }
 
     @Override
@@ -50,17 +64,11 @@ public class ListUsers extends AppCompatActivity implements ListUsersView {
         startActivity(intent);
     }
 
-    public void setRecyclerView(){
-        mRecyclerView = (RecyclerView) findViewById(R.id.users_recycler_view);
-
-        //Using a linear layout manager for the recycler view
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
-        //Specifying the recycler view adapter
-        mAdapter = new UsersAdapter(presenter.getUsers());
-        mRecyclerView.setAdapter(mAdapter);
+    public void launchNextActivity(Class activity, int itemId){
+        Intent intent = new Intent(this, activity);
+        startActivity(intent);
     }
+
 
     public void setNavigationDrawer(){
         mDrawerLayout = findViewById(R.id.drawer_layout);
@@ -100,11 +108,57 @@ public class ListUsers extends AppCompatActivity implements ListUsersView {
                             case R.id.nav_templates:
                                 launchNextActivity(ListTemplates.class);
                                 break;
+                            case R.id.nav_logout:
+                                SignInActivityPresenter.logOut(ListUsers.this);
+                                break;
                         }
 
                         return true;
                     }
                 });
+    }
+
+    public void setListView(List<User> users){
+        adapter = new UsersAdapter(this, users);
+
+        list = findViewById(R.id.users_list_view);
+        list.setAdapter(adapter);
+
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                presenter.itemClicked(position);
+            }
+        });
+
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int itemPosition, long id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ListUsers.this);
+                ListView modeListView = new ListView(ListUsers.this);
+                String[] modes = new String[] {"Edit User", "Delete User"};
+                ArrayAdapter<String> modeAdapter = new ArrayAdapter<>(ListUsers.this, android.R.layout.simple_list_item_1, android.R.id.text1, modes);
+                modeListView.setAdapter(modeAdapter);
+                builder.setView(modeListView);
+                final Dialog dialog = builder.create();
+                dialog.show();
+                modeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        //edit user
+                        if(position == 0){
+                            presenter.editItem(itemPosition);
+                        }
+                        //delete user
+                        else{
+                            presenter.deleteItem(itemPosition, ListUsers.this);
+                        }
+                        dialog.dismiss();
+                    }
+                });
+                return true;
+            }
+        });
     }
 
     public void setAppBar(){

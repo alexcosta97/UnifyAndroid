@@ -31,6 +31,6 @@ public interface LocationDao {
     @Query("SELECT * FROM location ORDER BY location_name ASC")
     List<Location> getAll();
 
-    @Query("SELECT * FROM location WHERE location_id = :query_id LIMIT 1")
-    Location getById(String query_id);
+    @Query("SELECT * FROM location WHERE id = :query_id LIMIT 1")
+    Location getById(int query_id);
 }

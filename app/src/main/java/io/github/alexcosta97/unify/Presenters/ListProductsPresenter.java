@@ -2,10 +2,13 @@ package io.github.alexcosta97.unify.Presenters;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.alexcosta97.unify.DetailsLocations;
+import io.github.alexcosta97.unify.DetailsProduct;
 import io.github.alexcosta97.unify.Models.Database.Authorization;
 import io.github.alexcosta97.unify.Models.Database.Product;
 import io.github.alexcosta97.unify.Models.Response.ProductResponse;
@@ -14,27 +17,30 @@ import io.github.alexcosta97.unify.Services.AppDatabase;
 import io.github.alexcosta97.unify.Services.Network;
 import io.github.alexcosta97.unify.Services.ResponseConverter;
 import io.github.alexcosta97.unify.Services.ServiceGenerator;
-import io.github.alexcosta97.unify.Views.ListProductsView;
+import io.github.alexcosta97.unify.Views.ListItemsView;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ListProductsPresenter {
-    private ListProductsView view;
+    private ListItemsView view;
     Context mContext;
     APIClient client;
     AppDatabase db;
+    Authorization auth;
     String token;
 
-    public ListProductsPresenter(ListProductsView parentView, final Context context){
+    public ListProductsPresenter(ListItemsView parentView, final Context context){
         view = parentView;
         mContext = context;
         db = AppDatabase.getDatabase(context);
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                Authorization auth = db.authorizationDao().getAuthorization();
+                auth = db.authorizationDao().getAuthorization();
                 token = auth.token;
+                client = ServiceGenerator.createService(token);
             }
         });
     }
@@ -42,7 +48,6 @@ public class ListProductsPresenter {
     public List<Product> getProducts(){
         final List<Product> products = new ArrayList<>();
         if(Network.isAvailable(mContext)){
-            client = ServiceGenerator.createService(token);
             Call<List<ProductResponse>> call = client.getProducts();
             call.enqueue(new Callback<List<ProductResponse>>() {
                 @Override
@@ -81,10 +86,33 @@ public class ListProductsPresenter {
         return products;
     }
 
-    public static void itemClicked(int itemPosition){
-
+    public void itemClicked(int itemPosition){
+        view.launchNextActivity(DetailsProduct.class, itemPosition);
     }
 
-    public static void deleteItem(int itemPosition){}
-    public static void editItem(int itemPosition){}
+    public void deleteItem(final int itemPosition){
+        final AppDatabase db = AppDatabase.getDatabase(mContext);
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                final Product product = db.productDao().getById(itemPosition);
+                Call<ResponseBody> call = client.deleteProduct(product.productId);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        Toast.makeText(mContext, "Operation Successful", Toast.LENGTH_LONG).show();
+                        db.productDao().deleteOne(product);
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Toast.makeText(mContext, "There was an issue processing your request", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+    }
+    public void editItem(int itemPosition){
+        //TODO: Add launchNextActivity on AddProductsActivity after creation
+    }
 }

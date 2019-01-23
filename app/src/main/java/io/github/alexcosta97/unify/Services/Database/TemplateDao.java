@@ -31,6 +31,6 @@ public interface TemplateDao {
     @Query("SELECT * FROM template ORDER BY template_name ASC")
     List<Template> getAll();
 
-    @Query("SELECT * FROM template WHERE template_id = :query_id LIMIT 1")
-    Template getById(String query_id);
+    @Query("SELECT * FROM template WHERE id = :query_id LIMIT 1")
+    Template getById(int query_id);
 }

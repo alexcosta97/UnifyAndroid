@@ -1,38 +1,53 @@
 package io.github.alexcosta97.unify;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.List;
 
 import io.github.alexcosta97.unify.Adapters.TemplatesAdapter;
+import io.github.alexcosta97.unify.Models.Database.Template;
 import io.github.alexcosta97.unify.Presenters.ListTemplatesPresenter;
-import io.github.alexcosta97.unify.Views.ListTemplatesView;
+import io.github.alexcosta97.unify.Presenters.SignInActivityPresenter;
+import io.github.alexcosta97.unify.Views.ListItemsView;
 
-public class ListTemplates extends AppCompatActivity implements ListTemplatesView {
+public class ListTemplates extends AppCompatActivity implements ListItemsView {
 
     private DrawerLayout mDrawerLayout;
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     private ListTemplatesPresenter presenter;
+    TemplatesAdapter adapter;
+    ListView list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list_users);
+        setContentView(R.layout.activity_list_templates);
         presenter = new ListTemplatesPresenter(this, this);
 
         setAppBar();
         setNavigationDrawer();
-        setRecyclerView();
+        setListView(presenter.getTemplates());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.clear();
+        adapter.addAll(presenter.getTemplates());
     }
 
     @Override
@@ -50,22 +65,58 @@ public class ListTemplates extends AppCompatActivity implements ListTemplatesVie
         startActivity(intent);
     }
 
-    public void setRecyclerView(){
-        mRecyclerView = (RecyclerView) findViewById(R.id.users_recycler_view);
+    public void launchNextActivity(Class activity, int itemId){
+        Intent intent = new Intent(this, activity);
+        startActivity(intent);
+    }
 
-        //Using a linear layout manager for the recycler view
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+    public void setListView(List<Template> templates){
+        adapter = new TemplatesAdapter(this, templates);
 
-        //Specifying the recycler view adapter
-        mAdapter = new TemplatesAdapter(presenter.getTemplates());
-        mRecyclerView.setAdapter(mAdapter);
+        list = findViewById(R.id.list_view_templates);
+        list.setAdapter(adapter);
+
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                presenter.itemClicked(position);
+            }
+        });
+
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int itemPosition, long id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ListTemplates.this);
+                ListView modeListView = new ListView(ListTemplates.this);
+                String[] modes = new String[] {"Edit Template", "Delete Template"};
+                ArrayAdapter<String> modeAdapter = new ArrayAdapter<>(ListTemplates.this, android.R.layout.simple_list_item_1, android.R.id.text1, modes);
+                modeListView.setAdapter(modeAdapter);
+                builder.setView(modeListView);
+                final Dialog dialog = builder.create();
+                dialog.show();
+                modeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        //edit template
+                        if(position == 0){
+                            presenter.editItem(itemPosition);
+                        }
+                        //delete template
+                        else{
+                            presenter.deleteItem(itemPosition, ListTemplates.this);
+                        }
+                        dialog.dismiss();
+                    }
+                });
+                return true;
+            }
+        });
     }
 
     public void setNavigationDrawer(){
         mDrawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setCheckedItem(R.id.nav_users);
+        navigationView.setCheckedItem(R.id.nav_templates);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -80,7 +131,7 @@ public class ListTemplates extends AppCompatActivity implements ListTemplatesVie
                                 launchNextActivity(MainMenu.class);
                                 break;
                             case R.id.nav_users:
-                                //Do nothing
+                                launchNextActivity(ListUsers.class);
                                 break;
                             case R.id.nav_locations:
                                 launchNextActivity(ListLocations.class);
@@ -98,7 +149,10 @@ public class ListTemplates extends AppCompatActivity implements ListTemplatesVie
                                 launchNextActivity(ListProducts.class);
                                 break;
                             case R.id.nav_templates:
-                                launchNextActivity(ListTemplates.class);
+                                //Do nothing
+                                break;
+                            case R.id.nav_logout:
+                                SignInActivityPresenter.logOut(ListTemplates.this);
                                 break;
                         }
 

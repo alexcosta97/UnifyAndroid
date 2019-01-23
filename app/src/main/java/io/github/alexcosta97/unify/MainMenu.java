@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import io.github.alexcosta97.unify.Presenters.MainMenuPresenter;
+import io.github.alexcosta97.unify.Presenters.SignInActivityPresenter;
 import io.github.alexcosta97.unify.Views.MainMenuView;
 
 public class MainMenu extends AppCompatActivity implements MainMenuView {
@@ -79,6 +80,9 @@ public class MainMenu extends AppCompatActivity implements MainMenuView {
                                 break;
                             case R.id.nav_templates:
                                 launchNextActivity(ListTemplates.class);
+                                break;
+                            case R.id.nav_logout:
+                                SignInActivityPresenter.logOut(MainMenu.this);
                                 break;
                         }
 

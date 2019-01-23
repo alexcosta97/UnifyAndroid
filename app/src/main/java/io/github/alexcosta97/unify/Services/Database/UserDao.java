@@ -28,9 +28,9 @@ public interface UserDao {
     @Delete
     void deleteMany(List<User> users);
 
-    @Query("SELECT * FROM user ORDER BY id ASC")
+    @Query("SELECT * FROM user")
     List<User> getAll();
 
-    @Query("SELECT * FROM user WHERE user_id = :query_id LIMIT 1")
-    User getById(String query_id);
+    @Query("SELECT * FROM user WHERE id = :query")
+    User getById(int query);
 }

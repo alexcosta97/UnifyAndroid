@@ -2,10 +2,12 @@ package io.github.alexcosta97.unify.Presenters;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.alexcosta97.unify.DetailsCategories;
 import io.github.alexcosta97.unify.Models.Database.Authorization;
 import io.github.alexcosta97.unify.Models.Database.Category;
 import io.github.alexcosta97.unify.Models.Response.CategoryResponse;
@@ -14,26 +16,28 @@ import io.github.alexcosta97.unify.Services.AppDatabase;
 import io.github.alexcosta97.unify.Services.Network;
 import io.github.alexcosta97.unify.Services.ResponseConverter;
 import io.github.alexcosta97.unify.Services.ServiceGenerator;
-import io.github.alexcosta97.unify.Views.ListCategoriesView;
+import io.github.alexcosta97.unify.Views.ListItemsView;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ListCategoriesPresenter{
-    private ListCategoriesView view;
+    private ListItemsView view;
     Context mContext;
     APIClient client;
     AppDatabase db;
+    Authorization auth;
     String token;
 
-    public ListCategoriesPresenter(ListCategoriesView parentView, final Context context){
+    public ListCategoriesPresenter(ListItemsView parentView, final Context context){
         view = parentView;
         mContext = context;
         db = AppDatabase.getDatabase(context);
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                Authorization auth = db.authorizationDao().getAuthorization();
+                auth = db.authorizationDao().getAuthorization();
                 token = auth.token;
             }
         });
@@ -80,10 +84,34 @@ public class ListCategoriesPresenter{
         return categories;
     }
 
-    public static void itemClicked(int itemPosition){
-
+    public void itemClicked(int itemPosition){
+        view.launchNextActivity(DetailsCategories.class, itemPosition);
     }
 
-    public static void deleteItem(int itemPosition){}
-    public static void editItem(int itemPosition){}
+    public void deleteItem(final int itemPosition){
+        final AppDatabase db = AppDatabase.getDatabase(mContext);
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                final Category category = db.categoryDao().getById(itemPosition);
+                APIClient client = ServiceGenerator.createService(token);
+                Call<ResponseBody> call = client.deleteCategory(category.categoryId);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        Toast.makeText(mContext, "Operation Successful", Toast.LENGTH_LONG).show();
+                        db.categoryDao().deleteOne(category);
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Toast.makeText(mContext, "There was an issue processing your request", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+    }
+    public void editItem(int itemPosition){
+        //TODO: Add launchNextActivity after creating AddCategory Activity
+    }
 }

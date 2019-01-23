@@ -12,20 +12,33 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ListTemplates"
-            android:label="@string/activity_list_templates_title"></activity>
-        <activity android:name=".ListProducts"
-            android:label="@string/activity_list_products_title"/>
-        <activity android:name=".ListSubcategories"
-            android:label="@string/activity_list_subcategories_title"/>
-        <activity android:name=".ListCategories"
-            android:label="@string/activity_list_categories_title"/>
-        <activity android:name=".ListSuppliers"
-            android:label="@string/activity_list_suppliers_title"/>
-        <activity android:name=".ListLocations"
-            android:label="@string/activity_list_locations_title"/>
-        <activity android:name=".TemplateOrder"
-            android:label="@string/activity_template_order_title"/>
+        <activity android:name=".DetailsTemplate" />
+        <activity android:name=".DetailsSupplier" />
+        <activity android:name=".DetailsSubcategory" />
+        <activity android:name=".DetailsProduct" />
+        <activity android:name=".DetailsLocations" />
+        <activity android:name=".DetailsCategories" />
+        <activity
+            android:name=".ListTemplates"
+            android:label="@string/activity_list_templates_title" />
+        <activity
+            android:name=".ListProducts"
+            android:label="@string/activity_list_products_title" />
+        <activity
+            android:name=".ListSubcategories"
+            android:label="@string/activity_list_subcategories_title" />
+        <activity
+            android:name=".ListCategories"
+            android:label="@string/activity_list_categories_title" />
+        <activity
+            android:name=".ListSuppliers"
+            android:label="@string/activity_list_suppliers_title" />
+        <activity
+            android:name=".ListLocations"
+            android:label="@string/activity_list_locations_title" />
+        <activity
+            android:name=".TemplateOrder"
+            android:label="@string/activity_template_order_title" />
         <activity
             android:name=".AddUser"
             android:label="@string/title_activity_add_user" />

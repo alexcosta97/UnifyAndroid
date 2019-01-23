@@ -31,6 +31,6 @@ public interface ProductDao {
     @Query("SELECT * FROM product ORDER BY product_name ASC")
     List<Product> getAll();
 
-    @Query("SELECT * FROM product WHERE product_id = :query_id LIMIT 1")
-    Product getById(String query_id);
+    @Query("SELECT * FROM product WHERE id = :query_id LIMIT 1")
+    Product getById(int query_id);
 }

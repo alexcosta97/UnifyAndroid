@@ -31,6 +31,6 @@ public interface SubcategoryDao {
     @Query("SELECT * FROM subcategory ORDER BY subcategory_name ASC")
     List<Subcategory> getAll();
 
-    @Query("SELECT * FROM subcategory WHERE subcategory_id = :query_id LIMIT 1")
-    Subcategory getById(String query_id);
+    @Query("SELECT * FROM subcategory WHERE id = :query_id LIMIT 1")
+    Subcategory getById(int query_id);
 }

@@ -1,28 +1,36 @@
 package io.github.alexcosta97.unify;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.List;
 
 import io.github.alexcosta97.unify.Adapters.CategoriesAdapter;
+import io.github.alexcosta97.unify.Models.Database.Category;
 import io.github.alexcosta97.unify.Presenters.ListCategoriesPresenter;
-import io.github.alexcosta97.unify.Views.ListCategoriesView;
+import io.github.alexcosta97.unify.Presenters.SignInActivityPresenter;
+import io.github.alexcosta97.unify.Views.ListItemsView;
 
-public class ListCategories extends AppCompatActivity implements ListCategoriesView {
+public class ListCategories extends AppCompatActivity implements ListItemsView {
 
     private DrawerLayout mDrawerLayout;
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     private ListCategoriesPresenter presenter;
+    CategoriesAdapter adapter;
+    ListView list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +40,14 @@ public class ListCategories extends AppCompatActivity implements ListCategoriesV
 
         setAppBar();
         setNavigationDrawer();
-        setRecyclerView();
+        setListView(presenter.getCategories());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.clear();
+        adapter.addAll(presenter.getCategories());
     }
 
     @Override
@@ -50,17 +65,11 @@ public class ListCategories extends AppCompatActivity implements ListCategoriesV
         startActivity(intent);
     }
 
-    public void setRecyclerView(){
-        mRecyclerView = (RecyclerView) findViewById(R.id.users_recycler_view);
-
-        //Using a linear layout manager for the recycler view
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
-        //Specifying the recycler view adapter
-        mAdapter = new CategoriesAdapter(presenter.getCategories());
-        mRecyclerView.setAdapter(mAdapter);
+    public void launchNextActivity(Class activity, int itemId){
+        Intent intent = new Intent(this, activity);
+        startActivity(intent);
     }
+
 
     public void setNavigationDrawer(){
         mDrawerLayout = findViewById(R.id.drawer_layout);
@@ -69,7 +78,7 @@ public class ListCategories extends AppCompatActivity implements ListCategoriesV
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                         // set item as selected to persist highlight
                         menuItem.setChecked(true);
                         // close drawer when item is tapped
@@ -100,6 +109,9 @@ public class ListCategories extends AppCompatActivity implements ListCategoriesV
                             case R.id.nav_templates:
                                 launchNextActivity(ListTemplates.class);
                                 break;
+                            case R.id.nav_logout:
+                                SignInActivityPresenter.logOut(ListCategories.this);
+                                break;
                         }
 
                         return true;
@@ -114,5 +126,48 @@ public class ListCategories extends AppCompatActivity implements ListCategoriesV
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
+    }
+
+    public void setListView(List<Category> categories){
+        adapter = new CategoriesAdapter(this, categories);
+
+        list = findViewById(R.id.list_view_categories);
+        list.setAdapter(adapter);
+
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                presenter.itemClicked(position);
+            }
+        });
+
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int itemPosition, long id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ListCategories.this);
+                ListView modeListView = new ListView(ListCategories.this);
+                String[] modes = new String[] {"Edit Category", "Delete Category"};
+                ArrayAdapter<String> modeAdapter = new ArrayAdapter<>(ListCategories.this, android.R.layout.simple_list_item_1, android.R.id.text1, modes);
+                modeListView.setAdapter(modeAdapter);
+                builder.setView(modeListView);
+                final Dialog dialog = builder.create();
+                dialog.show();
+                modeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        //edit category
+                        if(position == 0){
+                            presenter.editItem(itemPosition);
+                        }
+                        //delete category
+                        else{
+                            presenter.deleteItem(itemPosition, ListCategories.this);
+                        }
+                        dialog.dismiss();
+                    }
+                });
+                return true;
+            }
+        });
     }
 }

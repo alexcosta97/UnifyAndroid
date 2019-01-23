@@ -1,28 +1,36 @@
 package io.github.alexcosta97.unify;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.List;
 
 import io.github.alexcosta97.unify.Adapters.ProductsAdapter;
+import io.github.alexcosta97.unify.Models.Database.Product;
 import io.github.alexcosta97.unify.Presenters.ListProductsPresenter;
-import io.github.alexcosta97.unify.Views.ListProductsView;
+import io.github.alexcosta97.unify.Presenters.SignInActivityPresenter;
+import io.github.alexcosta97.unify.Views.ListItemsView;
 
-public class ListProducts extends AppCompatActivity implements ListProductsView {
+public class ListProducts extends AppCompatActivity implements ListItemsView {
 
     private DrawerLayout mDrawerLayout;
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     private ListProductsPresenter presenter;
+    ProductsAdapter adapter;
+    ListView list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +40,14 @@ public class ListProducts extends AppCompatActivity implements ListProductsView 
 
         setAppBar();
         setNavigationDrawer();
-        setRecyclerView();
+        setListView(presenter.getProducts());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.clear();
+        adapter.addAll(presenter.getProducts());
     }
 
     @Override
@@ -50,16 +65,52 @@ public class ListProducts extends AppCompatActivity implements ListProductsView 
         startActivity(intent);
     }
 
-    public void setRecyclerView(){
-        mRecyclerView = (RecyclerView) findViewById(R.id.users_recycler_view);
+    public void launchNextActivity(Class activity, int itemId){
+        Intent intent = new Intent(this, activity);
+        startActivity(intent);
+    }
 
-        //Using a linear layout manager for the recycler view
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+    public void setListView(List<Product> products){
+        adapter = new ProductsAdapter(this, products);
 
-        //Specifying the recycler view adapter
-        mAdapter = new ProductsAdapter(presenter.getProducts());
-        mRecyclerView.setAdapter(mAdapter);
+        list = findViewById(R.id.list_view_products);
+        list.setAdapter(adapter);
+
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                presenter.itemClicked(position);
+            }
+        });
+
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int itemPosition, long id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ListProducts.this);
+                ListView modeListView = new ListView(ListProducts.this);
+                String[] modes = new String[] {"Edit Product", "Delete Product"};
+                ArrayAdapter<String> modeAdapter = new ArrayAdapter<>(ListProducts.this, android.R.layout.simple_list_item_1, android.R.id.text1, modes);
+                modeListView.setAdapter(modeAdapter);
+                builder.setView(modeListView);
+                final Dialog dialog = builder.create();
+                dialog.show();
+                modeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        //edit product
+                        if(position == 0){
+                            presenter.editItem(itemPosition);
+                        }
+                        //delete product
+                        else{
+                            presenter.deleteItem(itemPosition, ListProducts.this);
+                        }
+                        dialog.dismiss();
+                    }
+                });
+                return true;
+            }
+        });
     }
 
     public void setNavigationDrawer(){
@@ -99,6 +150,9 @@ public class ListProducts extends AppCompatActivity implements ListProductsView 
                                 break;
                             case R.id.nav_templates:
                                 launchNextActivity(ListTemplates.class);
+                                break;
+                            case R.id.nav_logout:
+                                SignInActivityPresenter.logOut(ListProducts.this);
                                 break;
                         }
 

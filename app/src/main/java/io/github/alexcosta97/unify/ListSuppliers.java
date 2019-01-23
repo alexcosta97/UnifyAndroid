@@ -1,28 +1,36 @@
 package io.github.alexcosta97.unify;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.List;
 
 import io.github.alexcosta97.unify.Adapters.SuppliersAdapter;
+import io.github.alexcosta97.unify.Models.Database.Supplier;
 import io.github.alexcosta97.unify.Presenters.ListSuppliersPresenter;
-import io.github.alexcosta97.unify.Views.ListSuppliersView;
+import io.github.alexcosta97.unify.Presenters.SignInActivityPresenter;
+import io.github.alexcosta97.unify.Views.ListItemsView;
 
-public class ListSuppliers extends AppCompatActivity implements ListSuppliersView {
+public class ListSuppliers extends AppCompatActivity implements ListItemsView {
 
     private DrawerLayout mDrawerLayout;
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     private ListSuppliersPresenter presenter;
+    SuppliersAdapter adapter;
+    ListView list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +40,14 @@ public class ListSuppliers extends AppCompatActivity implements ListSuppliersVie
 
         setAppBar();
         setNavigationDrawer();
-        setRecyclerView();
+        setListView(presenter.getSuppliers());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.clear();
+        adapter.addAll(presenter.getSuppliers());
     }
 
     @Override
@@ -50,16 +65,52 @@ public class ListSuppliers extends AppCompatActivity implements ListSuppliersVie
         startActivity(intent);
     }
 
-    public void setRecyclerView(){
-        mRecyclerView = (RecyclerView) findViewById(R.id.users_recycler_view);
+    public void launchNextActivity(Class activity, int itemId){
+        Intent intent = new Intent(this, activity);
+        startActivity(intent);
+    }
 
-        //Using a linear layout manager for the recycler view
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+    public void setListView(List<Supplier> suppliers){
+        adapter = new SuppliersAdapter(this, suppliers);
 
-        //Specifying the recycler view adapter
-        mAdapter = new SuppliersAdapter(presenter.getSuppliers());
-        mRecyclerView.setAdapter(mAdapter);
+        list = findViewById(R.id.list_view_suppliers);
+        list.setAdapter(adapter);
+
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                presenter.itemClicked(position);
+            }
+        });
+
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int itemPosition, long id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ListSuppliers.this);
+                ListView modeListView = new ListView(ListSuppliers.this);
+                String[] modes = new String[] {"Edit Supplier", "Delete Supplier"};
+                ArrayAdapter<String> modeAdapter = new ArrayAdapter<>(ListSuppliers.this, android.R.layout.simple_list_item_1, android.R.id.text1, modes);
+                modeListView.setAdapter(modeAdapter);
+                builder.setView(modeListView);
+                final Dialog dialog = builder.create();
+                dialog.show();
+                modeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        //edit supplier
+                        if(position == 0){
+                            presenter.editItem(itemPosition);
+                        }
+                        //delete supplier
+                        else{
+                            presenter.deleteItem(itemPosition, ListSuppliers.this);
+                        }
+                        dialog.dismiss();
+                    }
+                });
+                return true;
+            }
+        });
     }
 
     public void setNavigationDrawer(){
@@ -99,6 +150,9 @@ public class ListSuppliers extends AppCompatActivity implements ListSuppliersVie
                                 break;
                             case R.id.nav_templates:
                                 launchNextActivity(ListTemplates.class);
+                                break;
+                            case R.id.nav_logout:
+                                SignInActivityPresenter.logOut(ListSuppliers.this);
                                 break;
                         }
 

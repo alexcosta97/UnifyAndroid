@@ -31,6 +31,6 @@ public interface SupplierDao {
     @Query("SELECT * FROM supplier ORDER BY supplier_name ASC")
     List<Supplier> getAll();
 
-    @Query("SELECT * FROM supplier WHERE supplier_id = :query_id LIMIT 1")
-    Supplier getById(String query_id);
+    @Query("SELECT * FROM supplier WHERE id = :query_id LIMIT 1")
+    Supplier getById(int query_id);
 }
